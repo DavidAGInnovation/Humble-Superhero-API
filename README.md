@@ -53,7 +53,9 @@ docker-compose up --build
 ```
 
 **Backend API:** http://localhost:3000
+
 **Frontend:** http://localhost:8080
+
 **PostgreSQL:** Accessible on port 5432.
 
 ## Collaboration & Future Improvements
@@ -61,15 +63,23 @@ docker-compose up --build
 ## Team Collaboration
 
 **Code Reviews & Pair Programming:** We’d collaborate closely to review code, suggest improvements, and ensure adherence to coding standards.
+
 **Modular Design:** With clear separation of concerns, team members can work on the backend, frontend, or microservices independently.
+
 **Documentation:** This README and inline comments serve as a starting point for new team members.
 
 ## If I Had More Time
 
 **Persistent Messaging / Websockets:** Upgrade the frontend for true real‑time updates using WebSockets or Server‑Sent Events.
+
 **Production‑Ready Database Migrations:** Replace synchronize: true with proper migrations.
+
 **Advanced Error Handling & Logging:** Integrate tools like Sentry or Winston for comprehensive error logging.
+
 **Microservices Architecture:** Extract the superhero functionality into its own microservice (e.g., using RabbitMQ or Kafka for communication).
+
 **Docker Swarm/Kubernetes:** Set up orchestration for scalability and resilience.
+
 **Enhanced CI/CD:** Add end‑to‑end tests and deployment steps in the CI/CD pipeline.
+
 **Frontend Enhancements:** Improve the UI/UX with additional feedback, animations, or integration with other APIs.
