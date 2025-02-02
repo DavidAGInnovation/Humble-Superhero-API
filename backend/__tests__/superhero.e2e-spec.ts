@@ -3,11 +3,13 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { SuperheroService } from '../src/superhero/superhero.service';
+import { DataSource } from 'typeorm';
+import { Superhero } from '../src/superhero/superhero.entity';
 
 
 describe('Superhero API (e2e)', () => {
     let app: INestApplication;
-    let superheroService: SuperheroService;
+    let dataSource: DataSource;
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -23,8 +25,12 @@ describe('Superhero API (e2e)', () => {
             }),
         );
         await app.init();
+        dataSource = app.get(DataSource);
+    });
 
-        superheroService = moduleFixture.get<SuperheroService>(SuperheroService);
+    beforeEach(async () => {
+        // Clear all superheroes to ensure a clean state.
+        await dataSource.getRepository(Superhero).clear();
     });
 
     it('POST /superheroes - success', async () => {
@@ -45,7 +51,7 @@ describe('Superhero API (e2e)', () => {
     });
 
     it('GET /superheroes - returns superheroes sorted by humilityScore descending', async () => {
-        // Create multiple heroes
+        // Insert exactly three heroes
         await request(app.getHttpServer()).post('/superheroes').send({
             name: 'Hero A',
             superpower: 'Flying',
