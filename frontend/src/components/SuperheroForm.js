@@ -1,4 +1,3 @@
-// frontend/src/components/SuperheroForm.js
 import React, { useState } from 'react';
 
 function SuperheroForm({ addSuperhero }) {

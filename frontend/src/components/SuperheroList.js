@@ -1,4 +1,3 @@
-// frontend/src/components/SuperheroList.js
 import React from 'react';
 
 function SuperheroList({ superheroes }) {
@@ -14,7 +13,7 @@ function SuperheroList({ superheroes }) {
                     <div className="card-body">
                         <h5 className="card-title">{hero.name}</h5>
                         <p className="card-text">
-                            <strong>Superpower:</strong> {hero.superpower} <br />
+                            <strong>Superpower:</strong> {hero.superpower}<br />
                             <strong>Humility Score:</strong> {hero.humilityScore}
                         </p>
                     </div>

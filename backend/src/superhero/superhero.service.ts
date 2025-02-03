@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Superhero } from './superhero.entity';
@@ -12,18 +12,12 @@ export class SuperheroService {
     ) { }
 
     async create(createSuperheroDto: CreateSuperheroDto): Promise<Superhero> {
-        try {
-            const superhero = this.superheroRepository.create(createSuperheroDto);
-            return await this.superheroRepository.save(superhero);
-        } catch (error) {
-            throw new HttpException(
-                'Could not create superhero. Please verify your input.',
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+        const superhero = this.superheroRepository.create(createSuperheroDto);
+        return await this.superheroRepository.save(superhero);
     }
 
     async findAll(): Promise<Superhero[]> {
-        return this.superheroRepository.find({ order: { humilityScore: 'DESC' } });
+        // Sort by humilityScore descending
+        return await this.superheroRepository.find({ order: { humilityScore: 'DESC' } });
     }
 }

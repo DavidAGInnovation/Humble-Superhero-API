@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { SuperheroService } from '../src/superhero/superhero.service';
 import { DataSource } from 'typeorm';
+import { AppModule } from '../src/app.module';
 import { Superhero } from '../src/superhero/superhero.entity';
-
 
 describe('Superhero API (e2e)', () => {
     let app: INestApplication;
@@ -29,7 +27,7 @@ describe('Superhero API (e2e)', () => {
     });
 
     beforeEach(async () => {
-        // Clear all superheroes to ensure a clean state.
+        // Clear the superhero table before each test
         await dataSource.getRepository(Superhero).clear();
     });
 
@@ -51,7 +49,7 @@ describe('Superhero API (e2e)', () => {
     });
 
     it('GET /superheroes - returns superheroes sorted by humilityScore descending', async () => {
-        // Insert exactly three heroes
+        // Insert three heroes
         await request(app.getHttpServer()).post('/superheroes').send({
             name: 'Hero A',
             superpower: 'Flying',
@@ -74,7 +72,7 @@ describe('Superhero API (e2e)', () => {
 
         const superheroes = response.body;
         expect(superheroes).toHaveLength(3);
-        // Check that the highest humility score is first.
+        // Expect sorting by humilityScore descending: highest first
         expect(superheroes[0].humilityScore).toBe(8);
         expect(superheroes[1].humilityScore).toBe(7);
         expect(superheroes[2].humilityScore).toBe(5);

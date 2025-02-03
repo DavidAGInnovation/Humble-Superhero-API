@@ -1,4 +1,3 @@
-// frontend/src/App.js
 import React, { useState, useEffect } from 'react';
 import SuperheroForm from './components/SuperheroForm';
 import SuperheroList from './components/SuperheroList';

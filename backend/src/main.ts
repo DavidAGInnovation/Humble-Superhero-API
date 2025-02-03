@@ -3,8 +3,15 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    app.enableCors(); // <-- Add this line to allow cross-origin requests
+    // Set up CORS directly during creation.
+    const app = await NestFactory.create(AppModule, {
+        cors: {
+            origin: 'http://localhost:8080',
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+            allowedHeaders: 'Content-Type, Accept',
+            optionsSuccessStatus: 204,
+        },
+    });
 
     app.useGlobalPipes(
         new ValidationPipe({
@@ -13,6 +20,7 @@ async function bootstrap() {
             transform: true,
         }),
     );
+
     await app.listen(3000);
     console.log('Backend API is listening on http://localhost:3000');
 }
