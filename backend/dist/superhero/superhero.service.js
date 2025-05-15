@@ -22,16 +22,12 @@ let SuperheroService = class SuperheroService {
         this.superheroRepository = superheroRepository;
     }
     async create(createSuperheroDto) {
-        try {
-            const superhero = this.superheroRepository.create(createSuperheroDto);
-            return await this.superheroRepository.save(superhero);
-        }
-        catch (error) {
-            throw new common_1.HttpException('Could not create superhero. Please verify your input.', common_1.HttpStatus.BAD_REQUEST);
-        }
+        const superhero = this.superheroRepository.create(createSuperheroDto);
+        return await this.superheroRepository.save(superhero);
     }
     async findAll() {
-        return this.superheroRepository.find({ order: { humilityScore: 'DESC' } });
+        // Sort by humilityScore descending
+        return await this.superheroRepository.find({ order: { humilityScore: 'DESC' } });
     }
 };
 SuperheroService = __decorate([

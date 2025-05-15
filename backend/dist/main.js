@@ -1,21 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// backend/src/main.ts
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
-// Optional: Global exception filter for enhanced error handling
-const http_exception_filter_1 = require("./common/filters/http-exception.filter");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    // Enable global validation
+    // Set up CORS directly during creation.
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, {
+        cors: {
+            origin: ['http://localhost:8080', 'http://localhost:3001'],
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+            allowedHeaders: 'Content-Type, Accept',
+            optionsSuccessStatus: 204,
+        },
+    });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
     }));
-    // Optional: Use global HTTP exception filter
-    app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
     await app.listen(3000);
     console.log('Backend API is listening on http://localhost:3000');
 }

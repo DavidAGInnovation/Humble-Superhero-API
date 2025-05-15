@@ -14,17 +14,24 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuperheroController = void 0;
 const common_1 = require("@nestjs/common");
-const superhero_service_1 = require("./superhero.service");
 const create_superhero_dto_1 = require("./dto/create-superhero.dto");
+const superhero_service_1 = require("./superhero.service");
 let SuperheroController = class SuperheroController {
     constructor(superheroService) {
         this.superheroService = superheroService;
     }
-    async create(createSuperheroDto) {
+    create(createSuperheroDto) {
         return this.superheroService.create(createSuperheroDto);
     }
-    async findAll() {
+    findAll() {
         return this.superheroService.findAll();
+    }
+    // Explicit OPTIONS handler for /superheroes if needed
+    handleOptions(req, res) {
+        res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+        res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+        return res.status(204).send();
     }
 };
 __decorate([
@@ -32,14 +39,22 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_superhero_dto_1.CreateSuperheroDto]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], SuperheroController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], SuperheroController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Options)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SuperheroController.prototype, "handleOptions", null);
 SuperheroController = __decorate([
     (0, common_1.Controller)('superheroes'),
     __metadata("design:paramtypes", [superhero_service_1.SuperheroService])

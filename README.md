@@ -13,7 +13,7 @@ This repository contains a complete solution for the Humble Superhero API, featu
 - **Dockerization:** Easily build and run the full stack using Docker Compose.
 - **Enhanced Validation:** DTOs use `class-validator` with custom error messages.
 - **Frontend Integration:** A React app allows users to add superheroes and view an updated list.
-- **Microservices Ready:** The superhero module is isolated; it can later be split into its own microservice using NestJS’s transport layers.
+- **Microservices Ready:** The superhero module is isolated; it can later be split into its own microservice using NestJS's transport layers.
 - **CI/CD:** Automated tests run on GitHub Actions.
 
 ## Setup
@@ -21,6 +21,7 @@ This repository contains a complete solution for the Humble Superhero API, featu
 ### Locally (without Docker)
 
 1. **Backend:**
+   - Start Docker Desktop app.
    - Navigate to the `backend` folder.
    - Install dependencies:  
      ```bash
@@ -56,11 +57,18 @@ docker-compose up --build
 **Frontend:** http://localhost:8080
 **PostgreSQL:** Accessible on port 5432.
 
+**Troubleshooting Database Connection Issues:**
+
+If the application (especially the backend) fails to start due to errors like `ECONNREFUSED`, it likely means it cannot connect to the PostgreSQL database. Ensure that:
+1. Your Docker daemon (e.g., Docker Desktop) is running.
+2. The database container is running. You can start it (and other services) with `docker-compose up -d`. If you only want to start the database, use `docker-compose up -d db`.
+   You can check running containers with `docker ps`.
+
 ## Collaboration & Future Improvements
 
 ## Team Collaboration
 
-**Code Reviews & Pair Programming:** We’d collaborate closely to review code, suggest improvements, and ensure adherence to coding standards.
+**Code Reviews & Pair Programming:** We'd collaborate closely to review code, suggest improvements, and ensure adherence to coding standards.
 **Modular Design:** With clear separation of concerns, team members can work on the backend, frontend, or microservices independently.
 **Documentation:** This README and inline comments serve as a starting point for new team members.
 
