@@ -16,55 +16,136 @@ This repository contains a complete solution for the Humble Superhero API, featu
 - **Microservices Ready:** The superhero module is isolated; it can later be split into its own microservice using NestJS's transport layers.
 - **CI/CD:** Automated tests run on GitHub Actions.
 
-## Setup
+## Running the Application
 
-### Locally (without Docker)
+There are two main ways to run this application:
 
-1. **Backend:**
-   - Start Docker Desktop app.
-   - Navigate to the `backend` folder.
-   - Install dependencies:  
-     ```bash
-     npm install
-     ```
-   - Create a PostgreSQL database named `superheroes` (or adjust the configuration in `ormconfig.json`/environment variables).
-   - Start the backend:  
-     ```bash
-     npm run start:dev
-     ```
+### Option 1: Running the Full Stack with Docker (Recommended)
 
-2. **Frontend:**
-   - Navigate to the `frontend` folder.
-   - Install dependencies:  
-     ```bash
-     npm install
-     ```
-   - Start the frontend:  
-     ```bash
-     npm start
-     ```
-   - The React app will run on [http://localhost:3001](http://localhost:3001) (adjust as needed).
-     
-![superhero](https://github.com/user-attachments/assets/302fc3a1-3e15-4d7a-8f5e-f1b2f6bf8d6a)
+This method runs the frontend, backend, and database in Docker containers. It's the simplest way to get the entire application running.
 
-### Using Docker
+**Prerequisites:**
+- Docker Desktop (or Docker Engine with Docker Compose) installed and running.
 
-From the project root, run:
+**Steps:**
+1.  **Clone the repository** (if you haven't already).
+2.  **Navigate to the project root directory** in your terminal.
+3.  **Build and start all services:**
+    ```bash
+    docker-compose up --build -d
+    ```
+    The `-d` flag runs the containers in detached mode (in the background). The first time you run this, Docker will download necessary images and build your application images, which may take a few minutes.
+4.  **Access the application:**
+    -   Frontend: [http://localhost:8080](http://localhost:8080)
+    -   Backend API: [http://localhost:3000](http://localhost:3000)
+    -   PostgreSQL database will be accessible on port `5432` to the other Docker containers (and to your host machine if needed).
 
+**To stop all services:**
 ```bash
-docker-compose up --build
+docker-compose down
 ```
+This command will stop and remove the containers and the network created by `docker-compose`. Add `-v` if you also want to remove the database volume.
 
-**Backend API:** http://localhost:3000
-**Frontend:** http://localhost:8080
-**PostgreSQL:** Accessible on port 5432.
+### Option 2: Running Services Locally (for Development)
 
-**Troubleshooting Database Connection Issues:**
+This setup is useful if you want to actively develop and run the frontend and/or backend locally, while still using the Dockerized database.
 
-If the application (especially the backend) fails to start due to errors like `ECONNREFUSED`, it likely means it cannot connect to the PostgreSQL database. Ensure that:
-1. Your Docker daemon (e.g., Docker Desktop) is running.
-2. The database container is running. You can start it (and other services) with `docker-compose up -d`. If you only want to start the database, use `docker-compose up -d db`.
-   You can check running containers with `docker ps`.
+**A. Database (Dockerized):**
+1.  Ensure Docker Desktop is running.
+2.  From the project root directory, start the database service:
+    ```bash
+    docker-compose up -d db
+    ```
+    This will start the PostgreSQL database container and make it accessible on `localhost:5432`.
+
+**B. Backend (Local):**
+1.  Navigate to the `backend` directory: `cd backend`.
+2.  **Dependency Management:**
+    -   Ensure your NestJS module versions in `package.json` are compatible. Generally, all `@nestjs/*` packages (including `@nestjs/common`, `@nestjs/core`, `@nestjs/platform-express`, `@nestjs/testing`, and `@nestjs/typeorm`) should align on the same major version (e.g., `^11.x.x`).
+    -   If you've made significant changes to these versions or encounter dependency issues (`ERESOLVE` errors), delete existing `node_modules` and `package-lock.json`:
+        ```bash
+        rm -rf node_modules package-lock.json
+        ```
+    -   Install dependencies:
+        ```bash
+        npm install
+        ```
+3.  **CORS Configuration:**
+    -   Ensure the backend is configured to accept requests from your local frontend's origin. Open `backend/src/main.ts` and verify the `cors` options. For a local frontend running on `http://localhost:3001`, it should look like this:
+        ```typescript
+        const app = await NestFactory.create(AppModule, {
+            cors: {
+                origin: ['http://localhost:8080', 'http://localhost:3001'], // Ensure your local frontend origin is listed
+                methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+                allowedHeaders: 'Content-Type, Accept',
+                optionsSuccessStatus: 204,
+            },
+        });
+        ```
+4.  **Start the backend development server:**
+    ```bash
+    npm run start:dev
+    ```
+    The backend API will be available at `http://localhost:3000`.
+
+**C. Frontend (Local):**
+1.  Navigate to the `frontend` directory: `cd frontend` (from project root or `cd ../frontend` if you are in `backend`).
+2.  **Dependency Management:**
+    -   Ensure `react-scripts` in `package.json` is set to a correct version (e.g., `^5.0.1`). An incorrect version like `^0.0.0` will cause issues.
+    -   If `react-scripts` version was incorrect or you face issues, delete `node_modules` and `package-lock.json`:
+        ```bash
+        rm -rf node_modules package-lock.json
+        ```
+    -   Install dependencies:
+        ```bash
+        npm install
+        ```
+3.  **Start the frontend development server:**
+    ```bash
+    npm start
+    ```
+    The frontend application will be available at `http://localhost:3001`.
+
+## Common Troubleshooting
+
+Here are solutions to some common issues you might encounter:
+
+-   **`ECONNREFUSED` (Backend unable to connect to Database):**
+    -   **Is Docker Running?** Ensure Docker Desktop (or your Docker daemon) is running.
+    -   **Is the Database Container Running?** Check with `docker ps`. If `humble-superhero-api-db-1` (or similar) isn't listed, start it from the project root: `docker-compose up -d db`.
+    -   **Local Backend Configuration:** If running the backend locally, ensure its database connection settings (e.g., in `.env` or `ormconfig.json`) point to `host: 'localhost'`, `port: 5432`, `username: 'postgres'`, `password: 'postgres'`, `database: 'superheroes'`.
+
+-   **`EADDRINUSE` (Port already in use, e.g., `:::3000`):**
+    -   This means another process is already using the port your application needs (usually port 3000 for the backend).
+    -   **Identify the process:** Use `sudo lsof -i :<port_number>` (e.g., `sudo lsof -i :3000`).
+    -   **Stop the process:** Use `kill -9 <PID>` (replace `<PID>` with the Process ID from the `lsof` output).
+    -   It could be a manually started local development server in another terminal, or a stuck Docker container. If you suspect a Docker container, run `docker-compose down` from the project root to stop and remove all project-related containers.
+
+-   **`Failed to fetch` (Frontend cannot reach Backend):**
+    -   **Is the Backend Running?** Ensure your backend (whether local or Dockerized) is running and accessible at its expected address (e.g., `http://localhost:3000`). Check its terminal logs for any startup errors.
+    -   **CORS Configuration:** This is a common cause. Ensure your backend's CORS policy (in `backend/src/main.ts`) allows requests from your frontend's origin (e.g., `http://localhost:3001` for local frontend, or `http://localhost:8080` for Dockerized frontend).
+
+-   **`react-scripts: command not found` (When running `npm start` in `frontend`):**
+    -   This usually means `react-scripts` is not installed correctly or its version is misconfigured.
+    -   In `frontend/package.json`, ensure `"react-scripts"` has a valid version, like `"^5.0.1"`. Avoid versions like `"^0.0.0"`.
+    -   In the `frontend` directory, delete `node_modules` and `package-lock.json` (`rm -rf node_modules package-lock.json`).
+    -   Then, run `npm install` again.
+
+-   **`ERESOLVE` (npm dependency conflicts, often in `backend`):**
+    -   These errors mean npm cannot find a set of package versions that satisfy all peer dependencies.
+    -   For the NestJS backend, ensure all `@nestjs/*` packages (like `@nestjs/common`, `@nestjs/core`, `@nestjs/platform-express`, `@nestjs/typeorm`, `@nestjs/testing`) are on compatible major versions (e.g., all `^11.x.x`).
+    -   To attempt a clean fix:
+        1.  Navigate to the affected directory (`backend` or `frontend`).
+        2.  Delete `node_modules` and `package-lock.json` (`rm -rf node_modules package-lock.json`).
+        3.  Manually correct the versions in `package.json` as needed.
+        4.  Run `npm install`.
+    -   **Avoid using `npm audit fix --force`** when dealing with these specific peer dependency issues, as it can sometimes worsen the problem by installing incompatible versions. Address security vulnerabilities separately after the main dependencies are stable.
+
+-   **General Docker Issues:**
+    -   **Is Docker Running?** Always ensure Docker Desktop (or your Docker daemon) is active.
+    -   **Check Running Containers:** `docker ps -a` (shows all containers, including stopped ones).
+    -   **View Container Logs:** `docker-compose logs <service_name>` (e.g., `docker-compose logs backend` or `docker-compose logs db`). This is very helpful for debugging container startup issues.
+    -   **Prune System:** If Docker is acting strangely or you suspect old/stuck resources: `docker system prune -a --volumes` (Caution: this removes all unused Docker data, including images, containers, networks, and volumes. Use with care).
 
 ## Collaboration & Future Improvements
 

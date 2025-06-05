@@ -37,6 +37,7 @@
     "overrides": {
         "inflight": "^1.0.6",
         "glob": "^9.0.0",
-        "superagent": "^9.0.0"
+        "superagent": "^9.0.0",
+        "multer": "2.0.1"
     }
 }
