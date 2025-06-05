@@ -25,6 +25,8 @@ This repository contains a complete solution for the Humble Superhero API, featu
    - Navigate to the `backend` folder.
    - Install dependencies:  
      ```bash
+     npm update
+     npm upgrade
      npm install
      ```
    - Create a PostgreSQL database named `superheroes` (or adjust the configuration in `ormconfig.json`/environment variables).
@@ -37,6 +39,8 @@ This repository contains a complete solution for the Humble Superhero API, featu
    - Navigate to the `frontend` folder.
    - Install dependencies:  
      ```bash
+     npm update
+     npm upgrade
      npm install
      ```
    - Start the frontend:  
