@@ -44,6 +44,8 @@ This repository contains a complete solution for the Humble Superhero API, featu
      npm start
      ```
    - The React app will run on [http://localhost:3001](http://localhost:3001) (adjust as needed).
+     
+![superhero](https://github.com/user-attachments/assets/302fc3a1-3e15-4d7a-8f5e-f1b2f6bf8d6a)
 
 ### Using Docker
 
